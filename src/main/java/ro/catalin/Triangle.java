@@ -5,82 +5,81 @@ import ro.catalin.exceptionHandler.InvalidInputException;
 import java.util.Scanner;
 
 public class Triangle {
-
     //types of triangles
-    private enum TriangleType {
-        isosceles,
-        equilateral,
-        scaleneRight,
-        scaleneObtuse,
-        scaleneAcute,
-        invalid
-    }
+    public static final String ISOSCELES = "an isosceles";
+    public static final String EQUILATERAL = "an equilateral";
+    public static final String SCALENE_RIGHT = "a scalene right";
+    public static final String SCALENE_OBTUSE = "a scalene obtuse";
+    public static final String SCALENE_ACUTE = "a scalene acute";
+    public static final String INVALID = "invalid";
 
     public static void main(String[] args) throws InvalidInputException {
-        int sideA;
-        int sideB;
-        int sideC;
+        double sideA;
+        double sideB;
+        double sideC;
         //users input
         Scanner sc = new Scanner(System.in);
         try {
-            sideA = sc.nextInt();
-            sideB = sc.nextInt();
-            sideC = sc.nextInt();
+            sideA = sc.nextDouble();
+            sideB = sc.nextDouble();
+            sideC = sc.nextDouble();
         } catch (Exception e) {
-            throw new InvalidInputException("Please enter a valid number in order to continue");
+            throw new InvalidInputException("Please enter a valid number.");
         }
 
+        createResponse(sideA, sideB, sideC);
+
+    }
+
+    public static void createResponse(double sideA, double sideB, double sideC) throws InvalidInputException {
         if (sideA <= 0 || sideB <= 0 || sideC <= 0) {
-            throw new InvalidInputException("Please enter a valid number in order to continue");
+            throw new InvalidInputException("Please enter a number greater than 0.");
         }
 
-        String triangleType = String.valueOf(determineTriangleType(sideA, sideB, sideC));
+        String triangleType = determineTriangleType(sideA, sideB, sideC);
 
-        if (triangleType.equalsIgnoreCase("invalid")) {
+        if (triangleType.equalsIgnoreCase(INVALID)) {
             System.out.println("The input values create an invalid triangle, please note that in order to " +
                     "create a valid triangle the sum of 2 sides must be greater than the value of the biggest " +
                     "side.");
 
         } else {
-            System.out.println("Your input values created an " + triangleType + " triangle !");
+            System.out.println("Your input values created " + triangleType + " triangle !");
         }
-
-
     }
 
-    private static TriangleType determineTriangleType(int sideA, int sideB, int sideC) {
+    public static String determineTriangleType(double sideA, double sideB, double sideC) {
         if (sideA >= (sideB + sideC) || sideC >= (sideB + sideA) || sideB >= (sideA + sideC)) {
-            return TriangleType.invalid;
+            return INVALID;
 
         } else if (sideA == sideB && sideB == sideC) {
-            return TriangleType.equilateral;
+            return EQUILATERAL;
 
-        } else if ((sideA == sideB && sideB != sideC) || (sideA != sideB && sideC == sideA) || (sideC == sideB && sideC != sideA)) {
-            return TriangleType.isosceles;
+        } else if (sideA == sideB || sideC == sideA || sideC == sideB) {
+            return ISOSCELES;
 
-        } else if (sideA != sideB && sideB != sideC && sideC != sideA) {
+        } else {
             //if the triangle is scalene ( all the sides are different from each other) determine what type of scalene triangle it is
             return determineTypeOfScalene(sideA, sideB, sideC);
         }
-        return TriangleType.invalid;
     }
 
-    private static TriangleType determineTypeOfScalene(int sideA, int sideB, int sideC) {
+    public static String determineTypeOfScalene(double sideA, double sideB, double sideC) {
 
         double aCos = (Math.pow(sideB, 2) + Math.pow(sideC, 2) - Math.pow(sideA, 2)) / (2 * sideB * sideC);
-        double aValue = Math.toDegrees(Math.acos(aCos));
+        double aAngle = Math.toDegrees(Math.acos(aCos));
 
         double bCos = (Math.pow(sideC, 2) + Math.pow(sideA, 2) - Math.pow(sideB, 2)) / (2 * sideC * sideA);
-        double bValue = Math.toDegrees(Math.acos(bCos));
+        double bAngle = Math.toDegrees(Math.acos(bCos));
 
-        double cValue = 180 - (aValue + bValue);
+        double cAngle = 180 - (aAngle + bAngle);
 
-        if (Math.round(aValue) == 90 || Math.round(bValue) == 90 || Math.round(cValue) == 90) {
-            return TriangleType.scaleneRight;
-        } else if (Math.round(aValue) > 90 || Math.round(bValue) > 90 || Math.round(cValue) > 90) {
-            return TriangleType.scaleneObtuse;
+        if (Math.round(aAngle) == 90 || Math.round(bAngle) == 90 || Math.round(cAngle) == 90) {
+            return SCALENE_RIGHT;
+        } else if (Math.round(aAngle) > 90 || Math.round(bAngle) > 90 || Math.round(cAngle) > 90) {
+            return SCALENE_OBTUSE;
         } else {
-            return TriangleType.scaleneAcute;
+            return SCALENE_ACUTE;
         }
     }
 }
