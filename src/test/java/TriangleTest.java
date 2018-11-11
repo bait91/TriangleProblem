@@ -1,101 +1,55 @@
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import ro.catalin.Triangle;
 import ro.catalin.exceptionHandler.InvalidInputException;
 
 public class TriangleTest {
 
-    private double sideA;
-    private double sideB;
-    private double sideC;
+    @DataProvider(name = "triangleTypeDataProvider")
+    public Object[][] triangleType() {
+        return new Object[][]{
+                {33, 2, 6, Triangle.INVALID},
+                {5.22, 5.22, 5.22, Triangle.EQUILATERAL},
+                {5.22, 4, 5.22, Triangle.ISOSCELES}};
+    }
+
+    @DataProvider(name = "scaleneTypeDataProvider")
+    public Object[][] scaleneType() {
+        return new Object[][]{
+                {5.22, 4, 6.22, Triangle.SCALENE_ACUTE},
+                {5.22, 4.22, 7, Triangle.SCALENE_OBTUSE},
+                {3, 4, 5, Triangle.SCALENE_RIGHT}};
+    }
 
 
     @Test(expectedExceptions = InvalidInputException.class)
     public void verifyError() throws InvalidInputException {
 
-        sideA = -1;
-        sideB = 0;
-        sideC = 0;
+        double sideA = -1;
+        double sideB = 0;
+        double sideC = 0;
 
         Triangle.createResponse(sideA, sideB, sideC);
 
     }
 
-    @Test
-    public void verifyInvalid() throws InvalidInputException {
-
-        sideA = -1;
-        sideB = 0;
-        sideC = 0;
-
+    @Test(dataProvider = "triangleTypeDataProvider")
+    public void verifyInvalid(double sideA, double sideB, double sideC, String triangleData) {
         String triangleType = Triangle.determineTriangleType(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.INVALID);
-
-    }
-
-    @Test
-    public void verifyEquilateral() {
-
-        sideA = 5.22;
-        sideB = 5.22;
-        sideC = 5.22;
-
-        String triangleType = Triangle.determineTriangleType(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.EQUILATERAL);
+        System.out.println("Looking for " + triangleData + " and got " + triangleType);
+        Assert.assertEquals(triangleType, triangleData);
 
     }
 
-    @Test
-    public void verifyIsosceles() {
 
-        sideA = 5.22;
-        sideB = 4;
-        sideC = 5.22;
-
-        String triangleType = Triangle.determineTriangleType(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.ISOSCELES);
-
-    }
-
-    @Test
-    public void verifyAcuteScalene() {
-
-        sideA = 5.22;
-        sideB = 4;
-        sideC = 6.22;
-
+    @Test(dataProvider = "scaleneTypeDataProvider")
+    public void verifyAcuteScalene(double sideA, double sideB, double sideC,  String triangleData) {
         String triangleType = Triangle.determineTypeOfScalene(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.SCALENE_ACUTE);
-
-    }
-
-    @Test
-    public void verifyObtuseScalene() {
-
-        sideA = 5.22;
-        sideB = 4.22;
-        sideC = 7;
-
-        String triangleType = Triangle.determineTypeOfScalene(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.SCALENE_OBTUSE);
+        System.out.println("Looking for " + triangleData + " and got " + triangleType);
+        Assert.assertEquals(triangleType, triangleData);
 
     }
 
-    @Test
-    public void verifyRightScalene() {
 
-        sideA = 3;
-        sideB = 4;
-        sideC = 5;
-
-        String triangleType = Triangle.determineTypeOfScalene(sideA, sideB, sideC);
-
-        Assert.assertEquals(triangleType, Triangle.SCALENE_RIGHT);
-
-    }
 }
